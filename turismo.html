@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Descubra o Nordeste</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --azul-profundo:#0B3D5C;
+      --azul-noite:#072A40;
+      --turquesa:#2EC4B6;
+      --areia:#F4E9D8;
+      --coral:#FF6B5B;
+      --branco:#FFFDF9;
+      font-family:'Inter',system-ui,-apple-system,sans-serif;
+    }
+    @media (prefers-color-scheme: dark){
+      :root:not([data-theme="light"]){ --branco:#FFFDF9; }
+    }
+    *{box-sizing:border-box; margin:0; padding:0;}
+    html{scroll-behavior:smooth; scroll-padding-top:env(safe-area-inset-top,0px);}
+    body{
+      background:var(--branco);
+      color:var(--azul-noite);
+      padding-top:env(safe-area-inset-top,0px);
+      padding-bottom:env(safe-area-inset-bottom,0px);
+      overflow-x:hidden;
+    }
+    h1,h2,h3{font-family:'Fraunces',serif; font-weight:600; line-height:1.1;}
+    p{line-height:1.6; max-width:62ch;}
+    a{color:inherit;}
+    img,svg{max-width:100%; display:block;}
+
+    /* ---------- Header ---------- */
+    header{
+      position:sticky; top:0; z-index:10;
+      display:flex; justify-content:space-between; align-items:center;
+      padding:1.2rem 6vw; padding-top:calc(1.2rem + env(safe-area-inset-top,0px));
+      background:rgba(255,253,249,0.9); backdrop-filter:blur(6px);
+      border-bottom:1px solid rgba(11,61,92,0.08);
+    }
+    .marca{font-family:'Fraunces',serif; font-size:1.3rem; font-weight:700; color:var(--azul-profundo);}
+    nav ul{display:flex; gap:2rem; list-style:none;}
+    nav a{text-decoration:none; font-size:0.95rem; font-weight:500;}
+    nav{display:none;}
+    @media(min-width:720px){nav{display:block;}}
+
+    /* ---------- Hero ---------- */
+    .hero{
+      position:relative;
+      min-height:88vh;
+      display:flex; flex-direction:column; justify-content:center;
+      padding:4rem 6vw 6rem;
+      background:linear-gradient(180deg, var(--azul-profundo) 0%, #0E5478 55%, #1C8AA0 100%);
+      color:var(--areia);
+      overflow:hidden;
+    }
+    .hero::before{
+      content:""; position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 60% 40% at 15% 15%, rgba(255,255,255,0.10), transparent 60%),
+        radial-gradient(ellipse 50% 30% at 90% 10%, rgba(46,196,182,0.25), transparent 60%);
+    }
+    .hero-conteudo{position:relative; max-width:640px;}
+    .hero h1{font-size:clamp(2.4rem, 6vw, 4rem); color:var(--branco);}
+    .hero p.lead{margin-top:1.2rem; font-size:1.15rem; color:var(--areia); opacity:0.92;}
+    .hero-acoes{margin-top:2.2rem; display:flex; gap:1rem; flex-wrap:wrap;}
+    .botao{
+      display:inline-block; padding:0.85rem 1.8rem; border-radius:2px;
+      font-weight:600; text-decoration:none; font-size:0.95rem;
+      transition:transform .15s ease;
+    }
+    .botao-primario{background:var(--coral); color:var(--branco);}
+    .botao-secundario{border:1px solid rgba(255,253,249,0.5); color:var(--branco);}
+    .botao:hover{transform:translateY(-2px);}
+    .botao:focus-visible, a:focus-visible, nav a:focus-visible{outline:2px solid var(--coral); outline-offset:3px;}
+
+    .onda{position:absolute; bottom:-1px; left:0; width:100%; line-height:0;}
+    .onda svg{width:100%; height:auto;}
+
+    /* ---------- Seções gerais ---------- */
+    section{padding:5rem 6vw;}
+    .cabecalho-secao{max-width:640px; margin-bottom:3rem;}
+    .cabecalho-secao h2{font-size:clamp(1.8rem,4vw,2.6rem); color:var(--azul-profundo);}
+    .cabecalho-secao p{margin-top:0.8rem; color:#3A5A6B;}
+
+    /* ---------- Destinos ---------- */
+    .destinos{background:var(--areia);}
+    .grade-destinos{
+      display:grid; gap:2rem;
+      grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+    }
+    .cartao-destino{
+      background:var(--branco);
+      border-top:4px solid var(--turquesa);
+      padding:2rem 1.6rem;
+    }
+    .cartao-destino .ilustracao{
+      width:100%; height:150px; margin-bottom:1.2rem;
+      border-radius:4px;
+    }
+    .cartao-destino h3{font-size:1.3rem; color:var(--azul-profundo); margin-bottom:0.5rem;}
+    .cartao-destino p{font-size:0.95rem; color:#3A5A6B;}
+
+    /* ilustrações CSS por destino */
+    .ilus-praia{background:linear-gradient(180deg,#8FD8E8 0%,#8FD8E8 55%,#F4E9D8 55%,#F4E9D8 100%);}
+    .ilus-recife{background:linear-gradient(180deg,#4FB3C9 0%,#4FB3C9 60%,#2EC4B6 60%,#2EC4B6 100%);}
+    .ilus-dunas{background:linear-gradient(135deg,#F6C86B 0%,#F4E9D8 60%,#5FD3D0 100%);}
+    .ilus-chapada{background:linear-gradient(180deg,#7FAE8C 0%,#7FAE8C 40%,#5A8A76 40%,#5A8A76 70%,#3E6656 70%,#3E6656 100%);}
+
+    /* ---------- Sobre / experiência ---------- */
+    .experiencia{
+      display:grid; gap:3rem;
+      grid-template-columns:1fr;
+    }
+    @media(min-width:800px){.experiencia{grid-template-columns:1fr 1fr; align-items:center;}}
+    .experiencia .visual{
+      height:280px;
+      background:linear-gradient(160deg,#0B3D5C 0%,#1C8AA0 50%,#2EC4B6 100%);
+      position:relative; overflow:hidden;
+    }
+    .experiencia .visual svg{position:absolute; bottom:0; left:0; width:100%;}
+    .lista-experiencia{list-style:none; margin-top:1.5rem; display:grid; gap:1rem;}
+    .lista-experiencia li{padding-left:1.4rem; position:relative; color:#3A5A6B; font-size:0.98rem;}
+    .lista-experiencia li::before{
+      content:""; position:absolute; left:0; top:0.5em;
+      width:8px; height:8px; background:var(--coral); border-radius:50%;
+    }
+
+    /* ---------- Depoimento ---------- */
+    .depoimento{
+      background:var(--azul-profundo); color:var(--areia);
+      text-align:left;
+    }
+    .depoimento blockquote{
+      font-family:'Fraunces',serif; font-size:clamp(1.3rem,3vw,1.8rem);
+      max-width:52ch; font-weight:400; font-style:italic;
+    }
+    .depoimento cite{display:block; margin-top:1.2rem; font-style:normal; font-size:0.9rem; color:var(--turquesa);}
+
+    /* ---------- CTA final ---------- */
+    .cta-final{
+      text-align:center; background:var(--coral); color:var(--branco);
+    }
+    .cta-final h2{color:var(--branco); font-size:clamp(1.8rem,4vw,2.4rem);}
+    .cta-final p{margin:1rem auto 2rem; color:rgba(255,253,249,0.9);}
+    .cta-final .botao-primario{background:var(--azul-profundo);}
+
+    /* ---------- Rodapé ---------- */
+    footer{
+      padding:3rem 6vw calc(2rem + env(safe-area-inset-bottom,0px));
+      background:var(--azul-noite); color:rgba(244,233,216,0.7);
+      display:flex; flex-wrap:wrap; justify-content:space-between; gap:1rem;
+      font-size:0.85rem;
+    }
+    footer .marca{color:var(--areia);}
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="marca">Rota Nordeste</span>
+  <nav>
+    <ul>
+      <li><a href="#destinos">Destinos</a></li>
+      <li><a href="#experiencia">Experiência</a></li>
+      <li><a href="#contato">Contato</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="hero-conteudo">
+      <h1>O litoral que faz o tempo parar</h1>
+      <p class="lead">Do mar de piscinas naturais às dunas douradas, o Nordeste brasileiro reúne paisagens que ficam guardadas na memória muito depois da viagem.</p>
+      <div class="hero-acoes">
+        <a href="#destinos" class="botao botao-primario">Explorar destinos</a>
+        <a href="#contato" class="botao botao-secundario">Planejar viagem</a>
+      </div>
+    </div>
+    <div class="onda">
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none"><path d="M0,64 C240,120 480,0 720,32 C960,64 1200,120 1440,64 L1440,120 L0,120 Z" fill="#F4E9D8"/></svg>
+    </div>
+  </section>
+
+  <section class="destinos" id="destinos">
+    <div class="cabecalho-secao">
+      <h2>Quatro paisagens, um só roteiro</h2>
+      <p>Cada destino tem um ritmo próprio — do mergulho tranquilo às trilhas entre cânions. Escolha por onde começar.</p>
+    </div>
+    <div class="grade-destinos">
+      <article class="cartao-destino">
+        <div class="ilustracao ilus-praia" role="img" aria-label="Ilustração de praia com águas claras"></div>
+        <h3>Porto de Galinhas, PE</h3>
+        <p>Piscinas naturais formadas por recifes de coral, ideais para observar peixes coloridos em águas mornas e transparentes.</p>
+      </article>
+      <article class="cartao-destino">
+        <div class="ilustracao ilus-recife" role="img" aria-label="Ilustração de mar turquesa"></div>
+        <h3>Fernando de Noronha, PE</h3>
+        <p>Arquipélago vulcânico com golfinhos-rotadores, trilhas costeiras e algumas das águas mais límpidas do Atlântico.</p>
+      </article>
+      <article class="cartao-destino">
+        <div class="ilustracao ilus-dunas" role="img" aria-label="Ilustração de dunas e lagoas"></div>
+        <h3>Jericoacoara, CE</h3>
+        <p>Dunas que se transformam ao vento, lagoas de água doce e um pôr do sol observado da Duna do Pôr do Sol.</p>
+      </article>
+      <article class="cartao-destino">
+        <div class="ilustracao ilus-chapada" role="img" aria-label="Ilustração de serra e vegetação"></div>
+        <h3>Chapada Diamantina, BA</h3>
+        <p>Cachoeiras, cânions e grutas de água cristalina em um interior montanhoso de trilhas para todos os níveis.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="experiencia">
+    <div class="experiencia">
+      <div>
+        <div class="cabecalho-secao" style="margin-bottom:1rem;">
+          <h2>Viajar com quem conhece cada trecho da costa</h2>
+          <p>Reunimos guias locais e roteiros testados para que cada parada valha o deslocamento.</p>
+        </div>
+        <ul class="lista-experiencia">
+          <li>Roteiros organizados por região, com deslocamentos otimizados entre praias e serras</li>
+          <li>Guias locais que conhecem marés, trilhas e os melhores horários para cada passeio</li>
+          <li>Hospedagens selecionadas, de pousadas de vila a resorts à beira-mar</li>
+          <li>Suporte durante toda a viagem, do embarque ao retorno</li>
+        </ul>
+      </div>
+      <div class="visual" aria-hidden="true">
+        <svg viewBox="0 0 400 120" preserveAspectRatio="none"><path d="M0,80 C100,40 300,100 400,60 L400,120 L0,120 Z" fill="#F4E9D8" opacity="0.9"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="depoimento">
+    <blockquote>
+      "Voltei de Jericoacoara com a sensação de ter visto um Brasil que não conhecia — e a organização do roteiro fez toda a diferença."
+      <cite>— Marina A., viajante</cite>
+    </blockquote>
+  </section>
+
+  <section class="cta-final" id="contato">
+    <h2>Sua próxima viagem começa aqui</h2>
+    <p>Conte quantos dias você tem e montamos um roteiro sob medida pelo litoral e pelo interior do Nordeste.</p>
+    <a href="#" class="botao botao-primario">Falar com um especialista</a>
+  </section>
+</main>
+
+<footer>
+  <span class="marca">Rota Nordeste</span>
+  <span>&copy; 2026 Rota Nordeste. Todos os direitos reservados.</span>
+</footer>
+
+</body>
+</html>
