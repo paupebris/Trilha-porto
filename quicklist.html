@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quicklist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F8F3E6;
+    --paper-line:#DCD2B6;
+    --ink:#2E2B22;
+    --ink-soft:#7A7362;
+    --green:#4F7942;
+    --green-soft:#E4EBDD;
+    --red:#B23A22;
+    --red-soft:#F3E2DB;
+    color-scheme: light;
+    box-sizing:border-box;
+    padding-top: env(safe-area-inset-top,0px);
+    padding-bottom: env(safe-area-inset-bottom,0px);
+  }
+  *{box-sizing:inherit;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    background:#EFE6D0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,0,0,0.05) 1px, transparent 0);
+    background-size: 14px 14px;
+    font-family:'Work Sans',sans-serif;
+    color:var(--ink);
+    display:flex;
+    justify-content:center;
+    padding:32px 16px 60px;
+  }
+  .receipt{
+    width:100%;
+    max-width:420px;
+    background:var(--paper);
+    box-shadow: 0 18px 40px rgba(46,43,34,0.18);
+    padding:32px 26px 14px;
+    position:relative;
+  }
+  .receipt::after{
+    content:"";
+    position:absolute;
+    left:0; right:0; bottom:-14px;
+    height:16px;
+    background:
+      linear-gradient(-45deg, var(--paper) 8px, transparent 0) 0 0 / 16px 16px repeat-x,
+      linear-gradient(45deg, var(--paper) 8px, transparent 0) 0 0 / 16px 16px repeat-x;
+  }
+  header{ text-align:center; margin-bottom:22px; }
+  h1{
+    font-family:'Special Elite', monospace;
+    font-size:2rem;
+    letter-spacing:1px;
+    margin:0 0 4px;
+  }
+  .subtitle{
+    color:var(--ink-soft);
+    font-size:0.92rem;
+    margin:0;
+  }
+  .status{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    font-size:0.82rem;
+    color:var(--ink-soft);
+    border-bottom:1px dashed var(--paper-line);
+    padding-bottom:10px;
+    margin-bottom:14px;
+  }
+  .status strong{ color:var(--ink); font-weight:600; }
+  form{
+    display:flex;
+    gap:8px;
+    margin-bottom:18px;
+  }
+  input[type="text"]{
+    flex:1;
+    min-width:0;
+    padding:11px 12px;
+    border:1px solid var(--paper-line);
+    background:#fff;
+    font-family:inherit;
+    font-size:0.98rem;
+    color:var(--ink);
+    border-radius:2px;
+  }
+  input[type="text"]:focus{
+    outline:2px solid var(--green);
+    outline-offset:1px;
+  }
+  button{
+    font-family:inherit;
+    cursor:pointer;
+    border:none;
+  }
+  .add-btn{
+    background:var(--ink);
+    color:var(--paper);
+    padding:0 18px;
+    font-size:1.3rem;
+    line-height:1;
+    border-radius:2px;
+    transition:transform .12s ease, background .12s ease;
+  }
+  .add-btn:active{ transform:scale(0.94); }
+  .add-btn:hover{ background:var(--green); }
+
+  ul.items{
+    list-style:none;
+    margin:0;
+    padding:0;
+    min-height:40px;
+  }
+  .empty{
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:0.9rem;
+    padding:28px 0 18px;
+  }
+  li.item{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:11px 0;
+    border-bottom:1px dashed var(--paper-line);
+    transition: opacity .28s ease, transform .28s ease, max-height .28s ease, padding .28s ease, margin .28s ease;
+    max-height:60px;
+  }
+  li.item.leaving{
+    opacity:0;
+    transform:translateX(18px);
+    max-height:0;
+    padding-top:0; padding-bottom:0;
+    border-color:transparent;
+    overflow:hidden;
+  }
+  .check{
+    flex-shrink:0;
+    width:22px; height:22px;
+    border:2px solid var(--ink-soft);
+    border-radius:50%;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+  }
+  .check svg{ width:12px; height:12px; opacity:0; transition:opacity .15s ease; }
+  li.done .check{ background:var(--green); border-color:var(--green); }
+  li.done .check svg{ opacity:1; }
+  .item-name{
+    flex:1;
+    min-width:0;
+    font-size:1rem;
+    word-break:break-word;
+  }
+  li.done .item-name{
+    text-decoration:line-through;
+    color:var(--ink-soft);
+  }
+  .del{
+    flex-shrink:0;
+    width:30px; height:30px;
+    border-radius:50%;
+    background:transparent;
+    color:var(--ink-soft);
+    font-size:1.1rem;
+    display:flex; align-items:center; justify-content:center;
+    transition:background .15s ease, color .15s ease;
+  }
+  .del:hover{ background:var(--red-soft); color:var(--red); }
+
+  .toast{
+    position:fixed;
+    left:50%;
+    bottom:calc(24px + env(safe-area-inset-bottom,0px));
+    transform:translate(-50%, 12px);
+    background:var(--ink);
+    color:var(--paper);
+    padding:10px 18px;
+    border-radius:4px;
+    font-size:0.88rem;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease, transform .2s ease;
+    box-shadow:0 8px 22px rgba(0,0,0,0.25);
+  }
+  .toast.show{ opacity:1; transform:translate(-50%, 0); pointer-events:auto; }
+  .toast button{
+    background:none; color:var(--green-soft); text-decoration:underline;
+    font-size:0.86rem; font-weight:600; padding:0;
+  }
+  @media (prefers-reduced-motion: reduce){
+    li.item, .toast, .add-btn{ transition:none; }
+  }
+</style>
+</head>
+<body>
+  <main class="receipt">
+    <header>
+      <h1>Quicklist</h1>
+      <p class="subtitle">sua lista de compras da semana</p>
+    </header>
+
+    <div class="status">
+      <span id="statusText">Comece adicionando um item</span>
+      <span id="statusCount"></span>
+    </div>
+
+    <form id="addForm">
+      <input type="text" id="itemInput" placeholder="Ex.: leite, ovos, café..." autocomplete="off" maxlength="60">
+      <button type="submit" class="add-btn" aria-label="Adicionar item">+</button>
+    </form>
+
+    <ul class="items" id="itemList"></ul>
+  </main>
+
+  <div class="toast" id="toast">
+    <span id="toastMsg"></span>
+    <button id="undoBtn" type="button">Desfazer</button>
+  </div>
+
+<script>
+(function(){
+  const STORAGE_KEY = 'quicklist-items-v1';
+  const listEl = document.getElementById('itemList');
+  const form = document.getElementById('addForm');
+  const input = document.getElementById('itemInput');
+  const statusText = document.getElementById('statusText');
+  const statusCount = document.getElementById('statusCount');
+  const toast = document.getElementById('toast');
+  const toastMsg = document.getElementById('toastMsg');
+  const undoBtn = document.getElementById('undoBtn');
+
+  let items = [];
+  let lastRemoved = null; // {item, index}
+  let toastTimer = null;
+
+  function load(){
+    try{
+      const raw = localStorage.getItem(STORAGE_KEY);
+      items = raw ? JSON.parse(raw) : [
+        {id: cryptoId(), name:'Leite', done:false},
+        {id: cryptoId(), name:'Ovos', done:false},
+        {id: cryptoId(), name:'Café', done:true},
+      ];
+    }catch(e){ items = []; }
+  }
+  function save(){
+    try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }catch(e){}
+  }
+  function cryptoId(){
+    return 'i-' + Math.random().toString(36).slice(2,10);
+  }
+
+  function render(){
+    listEl.innerHTML = '';
+    if(items.length === 0){
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'Sua lista está vazia. Adicione o primeiro item acima.';
+      listEl.appendChild(empty);
+    } else {
+      items.forEach(item => listEl.appendChild(buildItem(item)));
+    }
+    updateStatus();
+  }
+
+  function buildItem(item){
+    const li = document.createElement('li');
+    li.className = 'item' + (item.done ? ' done' : '');
+    li.dataset.id = item.id;
+
+    const check = document.createElement('button');
+    check.type = 'button';
+    check.className = 'check';
+    check.setAttribute('aria-label', item.done ? 'Marcar como pendente' : 'Marcar como comprado');
+    check.innerHTML = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 12L13 4" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    check.addEventListener('click', () => toggleDone(item.id));
+
+    const name = document.createElement('span');
+    name.className = 'item-name';
+    name.textContent = item.name;
+
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'del';
+    del.setAttribute('aria-label', 'Remover ' + item.name);
+    del.innerHTML = '✕';
+    del.addEventListener('click', () => removeItem(item.id));
+
+    li.appendChild(check);
+    li.appendChild(name);
+    li.appendChild(del);
+    return li;
+  }
+
+  function updateStatus(){
+    const total = items.length;
+    const doneCount = items.filter(i => i.done).length;
+    if(total === 0){
+      statusText.textContent = 'Comece adicionando um item';
+      statusCount.textContent = '';
+    } else {
+      statusText.textContent = doneCount === total ? 'Tudo comprado!' : 'Faltam ' + (total - doneCount) + ' item(ns)';
+      statusCount.textContent = doneCount + ' de ' + total;
+    }
+  }
+
+  function addItem(name){
+    const trimmed = name.trim();
+    if(!trimmed) return;
+    items.push({id: cryptoId(), name: trimmed, done:false});
+    save();
+    render();
+  }
+
+  function toggleDone(id){
+    const it = items.find(i => i.id === id);
+    if(!it) return;
+    it.done = !it.done;
+    save();
+    render();
+  }
+
+  function removeItem(id){
+    const idx = items.findIndex(i => i.id === id);
+    if(idx === -1) return;
+    const li = listEl.querySelector('[data-id="' + id + '"]');
+    const doRemove = () => {
+      lastRemoved = { item: items[idx], index: idx };
+      items.splice(idx, 1);
+      save();
+      render();
+      showToast('Item removido');
+    };
+    if(li){
+      li.classList.add('leaving');
+      li.addEventListener('transitionend', doRemove, { once:true });
+      setTimeout(doRemove, 320); // fallback
+    } else {
+      doRemove();
+    }
+  }
+
+  function showToast(msg){
+    toastMsg.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+  }
+
+  undoBtn.addEventListener('click', () => {
+    if(!lastRemoved) return;
+    items.splice(lastRemoved.index, 0, lastRemoved.item);
+    lastRemoved = null;
+    save();
+    render();
+    toast.classList.remove('show');
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    addItem(input.value);
+    input.value = '';
+    input.focus();
+  });
+
+  load();
+  render();
+})();
+</script>
+</body>
+</html>
