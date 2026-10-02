@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Agenda do Pet Shop</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#e9f4f0;--panel:#fff;--ink:#12312b;--muted:#5a7670;--line:#cfe2db;--accent:#0f766e;--accent-ink:#fff;--sun:#ffd24a;--danger:#b3261e;--tint:#f4faf8;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a18;--panel:#162623;--ink:#e8f3f0;--muted:#92b0a9;--line:#27403b;--accent:#4fd1c0;--accent-ink:#06211d;--danger:#ff8a80;--tint:#1b2f2b}}
+:root[data-theme="dark"]{--bg:#0e1a18;--panel:#162623;--ink:#e8f3f0;--muted:#92b0a9;--line:#27403b;--accent:#4fd1c0;--accent-ink:#06211d;--danger:#ff8a80;--tint:#1b2f2b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Fredoka",system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.45}
+.wrap{max-width:1040px;margin:0 auto;padding:clamp(16px,4vw,44px)}
+h1{font-size:clamp(1.9rem,5.5vw,3.2rem);margin:0 0 .25rem;font-weight:600;line-height:1.05}
+.lead{margin:0 0 1.6rem;color:var(--muted)}
+.grid{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,6fr);gap:20px;align-items:start}
+@media (max-width:780px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1.5px solid var(--line);border-radius:20px;padding:clamp(16px,3vw,26px)}
+h2{font-size:1.2rem;margin:0 0 14px;font-weight:600}
+.field{margin-bottom:14px}
+label{display:block;font-weight:500;margin-bottom:5px}
+input,select{width:100%;font:inherit;padding:11px 13px;border:1.5px solid var(--line);border-radius:12px;background:var(--tint);color:var(--ink)}
+input:focus-visible,select:focus-visible,button:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.msg{min-height:1.4em;margin:0 0 10px;font-size:.92rem;color:var(--muted)}
+.msg.err{color:var(--danger);font-weight:500}
+.btn{font:inherit;font-weight:600;border:0;border-radius:12px;padding:13px;cursor:pointer;background:var(--accent);color:var(--accent-ink);width:100%;font-size:1.05rem}
+.btn:active{transform:translateY(1px)}
+.nav{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.nav button{font:inherit;border:1.5px solid var(--line);background:var(--tint);color:var(--ink);border-radius:12px;padding:8px 14px;cursor:pointer}
+.nav button:hover{border-color:var(--accent)}
+.nav input{flex:1;min-width:0;width:auto}
+.day{font-size:1.15rem;font-weight:500;text-transform:capitalize;margin:10px 0 2px}
+.count{color:var(--muted);margin:0 0 14px}
+.period{font-weight:600;color:var(--accent);margin:16px 0 8px;font-size:.95rem}
+ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.item{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;padding:12px;border:1.5px solid var(--line);border-radius:14px;background:var(--tint)}
+.time{background:var(--sun);color:#3b2f00;font-weight:600;border-radius:10px;padding:6px 10px;min-width:62px;text-align:center}
+.pet{font-weight:600;font-size:1.05rem;overflow-wrap:anywhere}
+.sub{color:var(--muted);font-size:.9rem;overflow-wrap:anywhere}
+.rm{font:inherit;font-size:.9rem;border:1.5px solid var(--line);background:transparent;color:var(--danger);border-radius:10px;padding:7px 11px;cursor:pointer}
+.rm.ask{background:var(--danger);color:#fff;border-color:var(--danger)}
+.empty{color:var(--muted);padding:22px 8px;text-align:center}
+@media (max-width:420px){.item{grid-template-columns:auto 1fr}.rm{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<main class="wrap">
+  <h1>Agenda do Pet Shop</h1>
+  <p class="lead">Veja os atendimentos do dia, marque novos horários e remova os que foram cancelados.</p>
+
+  <div class="grid">
+    <section class="panel" aria-labelledby="hNew">
+      <h2 id="hNew">Novo agendamento</h2>
+      <div class="field"><label for="pet">Nome do pet</label><input id="pet" maxlength="40" autocomplete="off" placeholder="Ex.: Thor"></div>
+      <div class="field"><label for="tutor">Nome do tutor</label><input id="tutor" maxlength="60" autocomplete="off" placeholder="Ex.: Ana Souza"></div>
+      <div class="field"><label for="service">Serviço</label>
+        <select id="service">
+          <option>Banho</option><option>Tosa</option><option>Banho e tosa</option><option>Consulta veterinária</option><option>Vacina</option><option>Hotelzinho</option>
+        </select></div>
+      <div class="row field">
+        <div><label for="date">Data</label><input id="date" type="date"></div>
+        <div><label for="slot">Horário</label><select id="slot"></select></div>
+      </div>
+      <p id="msg" class="msg" role="status" aria-live="polite"></p>
+      <button id="add" class="btn" type="button">Agendar</button>
+    </section>
+
+    <section class="panel" aria-labelledby="hAg">
+      <h2 id="hAg">Agenda</h2>
+      <div class="nav">
+        <button id="prev" type="button" aria-label="Dia anterior">&lt;</button>
+        <input id="view" type="date" aria-label="Dia da agenda">
+        <button id="next" type="button" aria-label="Próximo dia">&gt;</button>
+        <button id="today" type="button">Hoje</button>
+      </div>
+      <p id="day" class="day"></p>
+      <p id="count" class="count"></p>
+      <div id="list"></div>
+    </section>
+  </div>
+</main>
+
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i)};
+  var KEY='petshop-agenda-v1',items=[],view=iso(new Date());
+  var SLOTS=[];for(var h=8;h<18;h++){SLOTS.push(p2(h)+':00');SLOTS.push(p2(h)+':30')}
+  function p2(n){return n<10?'0'+n:''+n}
+  function iso(d){return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())}
+  function parse(s){var a=s.split('-');return new Date(+a[0],+a[1]-1,+a[2])}
+  function shift(s,n){var d=parse(s);d.setDate(d.getDate()+n);return iso(d)}
+  function load(){
+    try{var r=localStorage.getItem(KEY);if(r){items=JSON.parse(r);return}}catch(e){}
+    var t=iso(new Date());
+    items=[{id:1,pet:'Thor',tutor:'Ana Souza',service:'Banho e tosa',date:t,time:'09:00'},
+           {id:2,pet:'Mel',tutor:'Carlos Lima',service:'Vacina',date:t,time:'10:30'},
+           {id:3,pet:'Bob',tutor:'Julia Reis',service:'Consulta veterinária',date:t,time:'14:00'}];
+  }
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(items))}catch(e){}}
+  function taken(d,t){return items.some(function(i){return i.date===d&&i.time===t})}
+  function fillSlots(){
+    var d=$('date').value,sel=$('slot'),prev=sel.value;sel.innerHTML='';
+    SLOTS.forEach(function(t){
+      var o=document.createElement('option');o.value=t;
+      var busy=d&&taken(d,t);o.textContent=t+(busy?' (ocupado)':'');o.disabled=!!busy;sel.appendChild(o);
+    });
+    var first=Array.prototype.find.call(sel.options,function(o){return !o.disabled});
+    sel.value=(prev&&!taken(d,prev))?prev:(first?first.value:'');
+  }
+  function msg(t,err){var m=$('msg');m.textContent=t;m.className='msg'+(err?' err':'')}
+  function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+  function render(){
+    $('view').value=view;
+    var txt=parse(view).toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    $('day').textContent=txt;
+    var day=items.filter(function(i){return i.date===view}).sort(function(a,b){return a.time<b.time?-1:1});
+    $('count').textContent=day.length?day.length+(day.length===1?' atendimento':' atendimentos'):'';
+    var box=$('list');box.innerHTML='';
+    if(!day.length){box.appendChild(el('p','empty','Nenhum atendimento neste dia. Use o formulário para agendar o primeiro.'));return}
+    [['Manhã',0,12],['Tarde',12,18]].forEach(function(p){
+      var g=day.filter(function(i){var h=+i.time.slice(0,2);return h>=p[1]&&h<p[2]});
+      if(!g.length)return;
+      box.appendChild(el('p','period',p[0]));
+      var ul=el('ul');
+      g.forEach(function(i){
+        var li=el('li','item'),info=el('div');
+        info.appendChild(el('div','pet',i.pet));
+        info.appendChild(el('div','sub','Tutor: '+i.tutor+' • '+i.service));
+        var b=el('button','rm','Remover');b.type='button';
+        b.setAttribute('aria-label','Remover agendamento de '+i.pet);
+        b.addEventListener('click',function(){
+          if(!b.classList.contains('ask')){
+            b.classList.add('ask');b.textContent='Confirmar?';
+            setTimeout(function(){b.classList.remove('ask');b.textContent='Remover'},3000);return;
+          }
+          items=items.filter(function(x){return x.id!==i.id});save();fillSlots();render();
+        });
+        li.appendChild(el('div','time',i.time));li.appendChild(info);li.appendChild(b);ul.appendChild(li);
+      });
+      box.appendChild(ul);
+    });
+  }
+  function add(){
+    var pet=$('pet').value.trim(),tutor=$('tutor').value.trim(),d=$('date').value,t=$('slot').value;
+    if(!pet||!tutor){msg('Informe o nome do pet e do tutor.',true);return}
+    if(!d){msg('Escolha a data do atendimento.',true);return}
+    if(!t||taken(d,t)){msg('Esse horário já está ocupado. Escolha outro.',true);return}
+    items.push({id:Date.now(),pet:pet,tutor:tutor,service:$('service').value,date:d,time:t});
+    save();view=d;$('pet').value='';$('tutor').value='';
+    fillSlots();render();msg('Agendado: '+pet+' às '+t+'.');
+  }
+  $('add').addEventListener('click',add);
+  $('date').addEventListener('change',fillSlots);
+  $('view').addEventListener('change',function(){if(this.value){view=this.value;render()}});
+  $('prev').addEventListener('click',function(){view=shift(view,-1);render()});
+  $('next').addEventListener('click',function(){view=shift(view,1);render()});
+  $('today').addEventListener('click',function(){view=iso(new Date());render()});
+  ['pet','tutor'].forEach(function(i){$(i).addEventListener('keydown',function(e){if(e.key==='Enter')add()})});
+  $('date').value=view;$('date').min=iso(new Date());
+  load();fillSlots();render();
+})();
+</script>
+</body>
+</html>
